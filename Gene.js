@@ -1,13 +1,23 @@
 define(function (require) {
     'use strict';
 
+
+    /**
+     * @class  Gene
+     * @description  The raw data that describes a phenotype of a Creature
+     * 
+     * @param {String}   phenotype          The human-readable characteristic, e.g. 'Tooth length'
+     * @param {Number}   [lowerBounds=0]    The lowest possible value this Gene could be
+     * @param {Number}   [upperBounds=1]    The highest possible value this Gene could be
+     * @param {Function} [transform=noop]   A transformation function applied to the gene's value. For example, you could pass in `Math.round` if you wanted the Gene's value to always be an integer.
+     */
     function Gene (phenotype, lowerBounds, upperBounds, transform) {
 
         this.phenotype = phenotype;
 
-        this.lowerBounds = lowerBounds;
+        this.lowerBounds = typeof lowerBounds === 'number' ? lowerBounds : 0;
 
-        this.upperBounds = upperBounds;
+        this.upperBounds = typeof upperBounds === 'number' ? upperBounds : 1;
 
         this.transform = typeof transform === 'function' ? transform : function (x) { return x; };
 
