@@ -3,26 +3,26 @@ define(function (require) {
 
 
     function Creature () {
+        Array.call(this);
 
-        this.genes = [];
-
+        this.init();
     }
+    Creature.prototype = Object.create(Array.prototype);
+    Creature.prototype.constructor = Creature;
+
+
+    Creature.prototype.init = function () {
+
+    };
 
 
     Creature.prototype.breedWith = function (creature) {
-        var i = 0;
-        var l = this.genes.length;
-        var offspring = new Creature();
-        for (; i !== l; i++) {
-            /* TODO: Flesh out creature 'breeding' */
-        }
-        return new Creature();
     };
 
 
     Creature.prototype.getGeneByPhenotype = function (phenotype) {
         var foundGene = null;
-        this.genes.some(function (gene) {
+        this.some(function (gene) {
             if (gene.phenotype === phenotype) {
                 foundGene = gene;
                 return true;
@@ -32,5 +32,5 @@ define(function (require) {
     };
 
 
-    return this;
+    return Creature;
 });
