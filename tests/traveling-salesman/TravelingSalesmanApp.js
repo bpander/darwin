@@ -32,8 +32,10 @@ define(function (require) {
         this.environment.empty();
 
         for (; i !== populationSize; i++) {
-            this.environment.push(new RouteCreature(this.cities));
+            this.environment.push(new RouteCreature(this.cities).randomizeGenes());
         }
+
+        return this;
     };
 
 

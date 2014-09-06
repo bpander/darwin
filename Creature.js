@@ -13,10 +13,13 @@ define(function (require) {
 
     Creature.prototype.init = function () {
 
+        return this;
     };
 
 
     Creature.prototype.breedWith = function (creature) {
+
+        return this;
     };
 
 
@@ -29,6 +32,14 @@ define(function (require) {
             }
         });
         return foundGene;
+    };
+
+
+    Creature.prototype.randomizeGenes = function () {
+        this.forEach(function (gene) {
+            gene.randomize();
+        });
+        return this;
     };
 
 

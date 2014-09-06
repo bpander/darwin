@@ -30,7 +30,7 @@ define(function (require) {
 
 
     Gene.prototype.init = function () {
-        this.randomize();
+
         return this;
     };
 
