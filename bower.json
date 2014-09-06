@@ -1,0 +1,13 @@
+{
+  "name": "darwin",
+  "main": "Darwin.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/bpander/darwin",
+  "authors": [
+    "Bradley Anderson <brad.anderson87@gmail.com>"
+  ],
+  "license": "WTFPL",
+  "dependencies": {
+    "requirejs": "~2.1.14"
+  }
+}
