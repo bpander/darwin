@@ -41,8 +41,39 @@ define(function (require) {
     };
 
 
+    /**
+     * @method  mutate
+     * @description  Applies a mutation to a gene's value. We want every value in the range to be possible, but we want values closer to the current value to be favored. Also, if the Gene's current value is close to one of its bounds, we want it to be more likely to normalize rather than go closer to the nearest bound. To achieve this, we use an ellipse formula. Propbability is on the y-axis and percentOfDelta is on the x. Below y=0.5, the ellipse center point is (0, 0.5) with an x-radius of currentPercentOfDelta and a y-radius of 0.5. Above y=0.5, the ellipse center point is (1, 0.5) with an x-radius of 1 - currentPercentOfDelta and a y-radius of 0.5. This makes an S-shape where a large upswing occurs at the currentPercentOfDelta. We plug in a random value (0 to 1) and the output is our NEW percentOfDelta which we apply to the Gene's range to give us our new value. You really gotta draw this shit out for it to make sense.
+     * 
+     * @return {Gene}
+     */
     Gene.prototype.mutate = function () {
-        /* TODO: Flesh out Gene mutation */
+        var percentOfDelta = (this.value - this.lowerBounds) / this.delta;
+        var a;          // Radius of ellipse along x-axis
+        var b = 0.5;    // Radius of ellipse along y-axis
+        var h;          // x-coordinate of ellipse centerpoint
+        var k = 0.5;    // y-coordinate of ellipse centerpoint
+
+        var x;                  // The mutated percentOfDelta
+        var y = Math.random();  // The random input value
+        var doReflect = false;  // Because of squaring, we might need to reflect the result about the y-axis
+
+        if (y < 0.5) {
+            a = percentOfDelta;
+            h = 0;
+        } else {
+            a = 1 - percentOfDelta;
+            h = 1;
+            doReflect = true;
+        }
+
+        x = Math.sqrt( Math.pow(a, 2) * ( 1 - ( Math.pow(y - k, 2) / Math.pow(b, 2) ) ) ) + h;
+        if (doReflect) {
+            x = 2 - x;
+        }
+
+        this.value = this.transform(x * this.delta + this.lowerBounds);
+
         return this;
     };
 
