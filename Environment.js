@@ -23,51 +23,23 @@ define(function (require) {
 
     Environment.prototype.spawnNewGeneration = function () {
         var i = 0;
-        var indexOfDud = -1;
         var parentA;
         var parentB;
         var populationSize = this.creatures.length;
-        var score_max = -Infinity;
-        var score_min = Infinity;
 
         var creatures_evaluated = this.creatures.map(function (creature) {
             var fitnessScore = creature.fitnessFunction();
-            score_max = Math.max(score_max, fitnessScore);
-            score_min = Math.min(score_min, fitnessScore);
             return {
                 creature: creature,
                 fitnessScore: fitnessScore
             };
+        }).sort(function (a, b) {
+            return b.fitnessScore - a.fitnessScore;
         });
         var grabCreature = function () {
-            var baseWeight = 0;
-            var foundCreature = null;
-            var y = Math.random();
-            creatures_evaluated.some(function (creature_evaluated) {
-                baseWeight = baseWeight + creature_evaluated.fitnessScore;
-                if (y < baseWeight) {
-                    foundCreature = creature_evaluated.creature;
-                    return true;
-                }
-            });
-            if (foundCreature === null) {
-                throw new Error('somethings wrong!');
-            }
-            return foundCreature;
+            var i = Math.floor(Math.random() * creatures_evaluated.length * 0.6);
+            return creatures_evaluated[i].creature;
         };
-
-        // Decide odds based on individual creature's fitness
-        var fitnessScoreTotal = creatures_evaluated.reduce(function (previous, current) {
-            return previous + current.fitnessScore - score_min;
-        }, 0);
-        creatures_evaluated.forEach(function (creature_evaluated, i) {
-            if (creature_evaluated.fitnessScore === score_min) {
-                indexOfDud = i;
-                return;
-            }
-            creature_evaluated.fitnessScore = (creature_evaluated.fitnessScore - score_min) / fitnessScoreTotal;
-        });
-        creatures_evaluated.splice(indexOfDud, 1); // The 'dud' will just die off (fitnessScore === 0)
 
         // Select creatures and breed them together (or in Sims terms, get them to make woo-hoo)
         this.empty();
@@ -91,6 +63,13 @@ define(function (require) {
             this.spawnNewGeneration();
             generationsSpawned++;
         }
+
+        var localMaximum = -Infinity;
+        this.creatures.forEach(function (creature) {
+            var fitnessScore = creature.fitnessFunction();
+            localMaximum = Math.max(localMaximum, fitnessScore);
+        });
+        console.log('localMaximum:', localMaximum);
 
         return this;
     };

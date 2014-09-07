@@ -18,7 +18,7 @@ define(function (require) {
     }
 
 
-    TravelingSalesmanApp.MAX_GENERATIONS = 100;
+    TravelingSalesmanApp.MAX_GENERATIONS = 50;
 
 
     TravelingSalesmanApp.prototype.init = function () {
@@ -32,7 +32,7 @@ define(function (require) {
 
 
     TravelingSalesmanApp.prototype.generatePopulation = function (populationSize) {
-        populationSize = typeof populationSize === 'number' ? Math.round(populationSize) : 10;
+        populationSize = typeof populationSize === 'number' ? Math.round(populationSize) : 200;
         var i = 0;
 
         this.environment.empty();
