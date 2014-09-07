@@ -15,12 +15,6 @@ define(function (require) {
     };
 
 
-    Environment.prototype.evaluatePopulation = function () {
-
-        return this;
-    };
-
-
     Environment.prototype.spawnNewGeneration = function () {
         var i = 0;
         var fitnessScore_sum = 0;
