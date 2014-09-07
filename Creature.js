@@ -3,12 +3,11 @@ define(function (require) {
 
 
     function Creature () {
-        Array.call(this);
+
+        this.genes = [];
 
         this.init();
     }
-    Creature.prototype = Object.create(Array.prototype);
-    Creature.prototype.constructor = Creature;
 
 
     Creature.prototype.init = function () {
@@ -21,8 +20,8 @@ define(function (require) {
         var CreatureClass = this.constructor;
         var offspring = new CreatureClass();
 
-        this.forEach(function (gene, i) {
-            offspring.push(gene.crossWith(creature[i]));
+        this.genes.forEach(function (gene, i) {
+            offspring.genes.push(gene.crossWith(creature.genes[i]));
         });
 
         return offspring;
@@ -37,7 +36,7 @@ define(function (require) {
 
     Creature.prototype.getGeneByPhenotype = function (phenotype) {
         var foundGene = null;
-        this.some(function (gene) {
+        this.genes.some(function (gene) {
             if (gene.phenotype === phenotype) {
                 foundGene = gene;
                 return true;
@@ -48,7 +47,7 @@ define(function (require) {
 
 
     Creature.prototype.randomizeGenes = function () {
-        this.forEach(function (gene) {
+        this.genes.forEach(function (gene) {
             gene.randomize();
         });
         return this;

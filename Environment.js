@@ -3,17 +3,14 @@ define(function (require) {
 
 
     function Environment () {
-        Array.call(this);
+
+        this.creatures = [];
 
     }
-    Environment.prototype = Object.create(Array.prototype);
-    Environment.prototype.constructor = Environment;
 
 
     Environment.prototype.empty = function () {
-        while (this.length !== 0) {
-            this.pop();
-        }
+        this.creatures = [];
         return this;
     };
 
