@@ -28,7 +28,7 @@ define(function (require) {
     }
 
 
-    Gene.MUTATION_RATE = 0.01;
+    Gene.MUTATION_RATE = 0.1;
 
     Gene.INHERITANCE_METHOD = [
         function (geneA, geneB) {
