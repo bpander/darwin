@@ -37,7 +37,7 @@ define(function (require) {
             distance_total = distance_total + distance;
             return current;
         });
-        return distance_total;
+        return distance_total * -1;  // We multiply by -1 so the better RouteCreatures have a higher fitnessScore than worser RouteCreatures
     };
 
 

@@ -32,7 +32,7 @@ define(function (require) {
 
 
     TravelingSalesmanApp.prototype.generatePopulation = function (populationSize) {
-        populationSize = typeof populationSize === 'number' ? Math.round(populationSize) : 5;
+        populationSize = typeof populationSize === 'number' ? Math.round(populationSize) : 10;
         var i = 0;
 
         this.environment.empty();

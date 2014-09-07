@@ -22,7 +22,6 @@ define(function (require) {
 
 
     Environment.prototype.spawnNewGeneration = function () {
-        var fitnessScoreTotal = 0;
         var i = 0;
         var indexOfDud = -1;
         var parentA;
@@ -33,7 +32,6 @@ define(function (require) {
 
         var creatures_evaluated = this.creatures.map(function (creature) {
             var fitnessScore = creature.fitnessFunction();
-            fitnessScoreTotal = fitnessScoreTotal + fitnessScore;
             score_max = Math.max(score_max, fitnessScore);
             score_min = Math.min(score_min, fitnessScore);
             return {
@@ -52,11 +50,16 @@ define(function (require) {
                     return true;
                 }
             });
+            if (foundCreature === null) {
+                throw new Error('somethings wrong!');
+            }
             return foundCreature;
         };
 
         // Decide odds based on individual creature's fitness
-        fitnessScoreTotal = fitnessScoreTotal - (score_min * populationSize);
+        var fitnessScoreTotal = creatures_evaluated.reduce(function (previous, current) {
+            return previous + current.fitnessScore - score_min;
+        }, 0);
         creatures_evaluated.forEach(function (creature_evaluated, i) {
             if (creature_evaluated.fitnessScore === score_min) {
                 indexOfDud = i;
@@ -81,13 +84,15 @@ define(function (require) {
         if (typeof terminationEvaluator !== 'function') {
             throw new Error('terminationEvaluator must be a function, Dave');
         }
-        // TODO: This needs to actually get hooked up to the terminationEvaluator
-        var generationsSpawned = 0;
-        this.spawnNewGeneration();
-        generationsSpawned++;
 
-        terminationEvaluator(generationsSpawned);
-        return;
+        var generationsSpawned = 0;
+        while (terminationEvaluator(generationsSpawned) !== true) {
+            console.log('generationsSpawned', generationsSpawned);
+            this.spawnNewGeneration();
+            generationsSpawned++;
+        }
+
+        return this;
     };
 
 
