@@ -25,19 +25,42 @@ define(function (require) {
 
         this.value;
 
-        this.init();
     }
 
 
-    Gene.prototype.init = function () {
+    Gene.MUTATION_RATE = 0.01;
 
-        return this;
+    Gene.INHERITANCE_METHOD = [
+        function (geneA, geneB) {
+            var gene = geneA.copy();
+            gene.value = geneA.value;  // Gene inherits from parentA
+            return gene;
+        },
+        function (geneA, geneB) {
+            var gene = geneA.copy();
+            gene.value = geneB.value;  // Gene inherits from parentB
+            return gene;
+        },
+        function (geneA, geneB) {
+            var gene = geneA.copy();
+            gene.value = geneA.transform((geneA.value + geneB.value) / 2);  // Gene is average of A + B
+            return gene;
+        }
+    ];
+
+
+    Gene.prototype.copy = function () {
+        return new Gene(this.phenotype, this.lowerBounds, this.upperBounds, this.transform);
     };
 
 
-    Gene.prototype.randomize = function () {
-        this.value = this.transform(Math.random() * this.delta + this.lowerBounds);
-        return this;
+    Gene.prototype.crossWith = function (gene) {
+        var inheritanceMethod = Gene.INHERITANCE_METHOD[Math.floor(Math.random() * Gene.INHERITANCE_METHOD.length)];
+        var gene = inheritanceMethod(this, gene);
+        if (Math.random() < Gene.MUTATION_RATE) {
+            gene.mutate();
+        }
+        return gene;
     };
 
 
@@ -74,6 +97,12 @@ define(function (require) {
 
         this.value = this.transform(x * this.delta + this.lowerBounds);
 
+        return this;
+    };
+
+
+    Gene.prototype.randomize = function () {
+        this.value = this.transform(Math.random() * this.delta + this.lowerBounds);
         return this;
     };
 

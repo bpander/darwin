@@ -18,8 +18,14 @@ define(function (require) {
 
 
     Creature.prototype.breedWith = function (creature) {
+        var CreatureClass = this.constructor;
+        var offspring = new CreatureClass();
 
-        return this;
+        this.forEach(function (gene, i) {
+            offspring.push(gene.crossWith(creature[i]));
+        });
+
+        return offspring;
     };
 
 

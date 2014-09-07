@@ -7,7 +7,7 @@ define(function (require) {
 
     function RouteCreature (cities) {
 
-        this.cities = cities;
+        this.cities = cities || [];
 
         Creature.call(this);
     }
