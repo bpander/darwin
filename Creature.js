@@ -23,6 +23,12 @@ define(function (require) {
     };
 
 
+    Creature.prototype.fitnessFunction = function () {
+
+        return this;
+    };
+
+
     Creature.prototype.getGeneByPhenotype = function (phenotype) {
         var foundGene = null;
         this.some(function (gene) {

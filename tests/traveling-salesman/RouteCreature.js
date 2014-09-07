@@ -23,5 +23,23 @@ define(function (require) {
     };
 
 
+    RouteCreature.prototype.fitnessFunction = function () {
+        var gene_originCity = this[0];
+        var genes_sorted = this.slice(1).sort(function (a, b) {
+            return a.value - b.value;
+        });
+        var route = [ gene_originCity ].concat(genes_sorted, gene_originCity).map(function (gene) {
+            return gene.phenotype;
+        });
+        var distance_total = 0;
+        route.reduce(function (previous, current) {
+            var distance = Math.sqrt( Math.pow(current.x - previous.x, 2) + Math.pow(current.y - previous.y, 2) );
+            distance_total = distance_total + distance;
+            return current;
+        });
+        return distance_total;
+    };
+
+
     return RouteCreature;
 });
