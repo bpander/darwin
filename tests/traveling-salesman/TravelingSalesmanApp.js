@@ -18,9 +18,15 @@ define(function (require) {
     }
 
 
+    TravelingSalesmanApp.MAX_GENERATIONS = 100;
+
+
     TravelingSalesmanApp.prototype.init = function () {
         this.generateRandomCities();
         this.generatePopulation();
+        this.environment.runUntil(function (generationsSpawned) {
+            return generationsSpawned === TravelingSalesmanApp.MAX_GENERATIONS;
+        });
         return this;
     };
 
