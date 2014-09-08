@@ -20,8 +20,8 @@ define(function (require) {
         var CreatureClass = this.constructor;
         var offspring = new CreatureClass();
 
-        this.genes.forEach(function (gene, i) {
-            offspring.genes.push(gene.crossWith(creature.genes[i]));
+        offspring.genes = this.genes.map(function (gene, i) {
+            return gene.crossWith(creature.genes[i]);
         });
 
         return offspring;
