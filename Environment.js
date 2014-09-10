@@ -8,6 +8,8 @@ define(function (require) {
 
     }
 
+    var _globalMaximum = -Infinity;
+
 
     Environment.prototype.empty = function () {
         this.creatures = [];
@@ -24,6 +26,7 @@ define(function (require) {
 
         var creatures_evaluated = this.creatures.map(function (creature) {
             var fitnessScore = creature.fitnessFunction();
+            _globalMaximum = Math.max(_globalMaximum, fitnessScore);
             fitnessScore_sum = fitnessScore_sum + fitnessScore;
             return {
                 creature: creature,
@@ -81,7 +84,8 @@ define(function (require) {
             var fitnessScore = creature.fitnessFunction();
             localMaximum = Math.max(localMaximum, fitnessScore);
         });
-        console.log('localMaximum:', Math.sqrt(1 / localMaximum));
+        console.log('localMaximum:', localMaximum);
+        console.log('_globalMaximum:', _globalMaximum);
         // END TODO
 
         return this;
