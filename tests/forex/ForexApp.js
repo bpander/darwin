@@ -7,11 +7,11 @@ define(function (require) {
 
     function ForexApp () {
 
-        this.creatureCount = 2;
+        this.creatureCount = 500;
 
         this.environment = new Environment();
 
-        this.generationCount = 1;
+        this.generationCount = 200;
 
         this.init();
     }
