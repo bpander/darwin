@@ -1,6 +1,8 @@
 define(function (require) {
     'use strict';
 
+    var EvaluationResult = require('./EvaluationResult');
+
 
     function Creature () {
 
@@ -12,7 +14,6 @@ define(function (require) {
 
     Creature.prototype.init = function () {
 
-        return this;
     };
 
 
@@ -28,29 +29,34 @@ define(function (require) {
     };
 
 
-    Creature.prototype.fitnessFunction = function () {
+    Creature.prototype.evaluate = function (data) {
+        return new EvaluationResult(this, data, this.fitnessFunction(data));
+    };
 
-        return this;
+
+    Creature.prototype.fitnessFunction = function () {
+        return 0;
     };
 
 
     Creature.prototype.getGeneByPhenotype = function (phenotype) {
-        var foundGene = null;
-        this.genes.some(function (gene) {
+        var i = -1;
+        var gene;
+        while ((gene = this.genes[++i]) !== undefined) {
             if (gene.phenotype === phenotype) {
-                foundGene = gene;
-                return true;
+                return gene;
             }
-        });
-        return foundGene;
+        }
+        return null;
     };
 
 
-    Creature.prototype.randomizeGenes = function () {
-        this.genes.forEach(function (gene) {
+    Creature.prototype.randomize = function () {
+        var i = -1;
+        var gene;
+        while ((gene = this.genes[++i]) !== undefined) {
             gene.randomize();
-        });
-        return this;
+        }
     };
 
 

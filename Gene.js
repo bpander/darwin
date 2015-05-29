@@ -30,36 +30,34 @@ define(function (require) {
 
     Gene.MUTATION_RATE = 0.1;
 
-    Gene.INHERITANCE_METHOD = [
-        function (geneA, geneB) {
-            var gene = geneA.copy();
-            gene.value = geneA.value;  // Gene inherits from parentA
-            return gene;
-        },
-        function (geneA, geneB) {
-            var gene = geneA.copy();
-            gene.value = geneB.value;  // Gene inherits from parentB
-            return gene;
-        },
-        function (geneA, geneB) {
-            var gene = geneA.copy();
-            gene.value = geneA.transform((geneA.value + geneB.value) / 2);  // Gene is average of A + B
-            return gene;
-        }
-    ];
-
 
     Gene.prototype.copy = function () {
         return new Gene(this.phenotype, this.lowerBounds, this.upperBounds, this.transform);
     };
 
 
-    Gene.prototype.crossWith = function (gene) {
-        var inheritanceMethod = Gene.INHERITANCE_METHOD[Math.floor(Math.random() * Gene.INHERITANCE_METHOD.length)];
-        var gene = inheritanceMethod(this, gene);
+    Gene.prototype.crossWith = function (otherGene) {
+        var gene = this.copy();
+        var dice = Math.round(Math.random() * 3);
+        switch (dice) {
+
+            case 0:
+                gene.value = this.value;
+                break;
+
+            case 1:
+                gene.value = otherGene.value;
+                break;
+
+            case 2:
+                gene.value = this.transform((this.value + otherGene.value) / 2);
+                break;
+        }
+
         if (Math.random() < Gene.MUTATION_RATE) {
             gene.mutate();
         }
+
         return gene;
     };
 
@@ -71,39 +69,12 @@ define(function (require) {
      * @return {Gene}
      */
     Gene.prototype.mutate = function () {
-        var percentOfDelta = (this.value - this.lowerBounds) / this.delta;
-        var a;          // Radius of ellipse along x-axis
-        var b = 0.5;    // Radius of ellipse along y-axis
-        var h;          // x-coordinate of ellipse centerpoint
-        var k = 0.5;    // y-coordinate of ellipse centerpoint
-
-        var x;                  // The mutated percentOfDelta
-        var y = Math.random();  // The random input value
-        var doReflect = false;  // Because of squaring, we might need to reflect the result about the y-axis
-
-        if (y < 0.5) {
-            a = percentOfDelta;
-            h = 0;
-        } else {
-            a = 1 - percentOfDelta;
-            h = 1;
-            doReflect = true;
-        }
-
-        x = Math.sqrt( Math.pow(a, 2) * ( 1 - ( Math.pow(y - k, 2) / Math.pow(b, 2) ) ) ) + h;
-        if (doReflect) {
-            x = 2 - x;
-        }
-
-        this.value = this.transform(x * this.delta + this.lowerBounds);
-
-        return this;
+        this.randomize();
     };
 
 
     Gene.prototype.randomize = function () {
         this.value = this.transform(Math.random() * this.delta + this.lowerBounds);
-        return this;
     };
 
 

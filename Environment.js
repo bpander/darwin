@@ -8,87 +8,43 @@ define(function (require) {
 
     }
 
-    var _globalMaximum = -Infinity;
 
+    Environment.prototype.run = function (data) {
+        var evaluationResult;
+        var evaluationResults = [];
+        var fitnessScoreSum = 0;
+        var creature;
+        var i = -1;
+        while ((creature = this.creatures[++i]) !== undefined) {
+            evaluationResult = creature.evaluate(data);
+            evaluationResults.push(evaluationResult);
+            fitnessScoreSum += evaluationResult.fitnessScore;
+        }
+        console.log('test');
 
-    Environment.prototype.empty = function () {
-        this.creatures = [];
-        return this;
-    };
-
-
-    Environment.prototype.spawnNewGeneration = function () {
-        var i = 0;
-        var fitnessScore_sum = 0;
-        var parentA;
-        var parentB;
-        var populationSize = this.creatures.length;
-
-        var creatures_evaluated = this.creatures.map(function (creature) {
-            var fitnessScore = creature.fitnessFunction();
-            _globalMaximum = Math.max(_globalMaximum, fitnessScore);
-            fitnessScore_sum = fitnessScore_sum + fitnessScore;
-            return {
-                creature: creature,
-                fitnessScore: fitnessScore,
-                probability: 0
-            };
-        });
-        var grabCreature = function () {
-            var baseWeight = 0;
-            var foundCreature = null;
-            var y = Math.random();
-            creatures_evaluated.some(function (creature_evaluated) {
-                baseWeight = baseWeight + creature_evaluated.probability;
-                if (y < baseWeight) {
-                    foundCreature = creature_evaluated.creature;
-                    return true;
+        var weightedGetCreature = function () {
+            while (evaluationResult = evaluationResults[Math.round((evaluationResults.length - 1) * Math.random())]) {
+                if (Math.random() < evaluationResult.fitnessScore / fitnessScoreSum) {
+                    return evaluationResult.creature;
                 }
-            });
-            if (foundCreature === null) {
-                throw new Error('Could not find suitable Creature for breeding');
             }
-            return foundCreature;
         };
-
-        // Decide odds of picking individual Creatures. Better performing Creatures will have higher odds of getting grabbed.
-        creatures_evaluated.forEach(function (creature_evaluated) {
-            creature_evaluated.probability = creature_evaluated.fitnessScore / fitnessScore_sum;
-        });
-
-        // Select creatures and breed them together (or in Sims terms, get them to make woo-hoo)
-        this.empty();
-        for (; i !== populationSize; i++) {
-            parentA = grabCreature();
-            while ((parentB = grabCreature()) === parentA) {}  // Don't let `parentA` and `parentB` be the same creature
-            this.creatures.push(parentA.breedWith(parentB));
-        }
-        return this;
-    };
-
-
-    Environment.prototype.runUntil = function (terminationEvaluator) {
-        if (typeof terminationEvaluator !== 'function') {
-            throw new Error('terminationEvaluator must be a function, Dave');
+        if (fitnessScoreSum === 0) {
+            weightedGetCreature = function () {
+                return evaluationResults[Math.round((evaluationResults.length - 1) * Math.random())].creature;
+            };
         }
 
-        var generationsSpawned = 0;
-        while (terminationEvaluator(generationsSpawned) !== true) {
-            this.spawnNewGeneration();
-            generationsSpawned++;
+        var creatureA;
+        var creatureB;
+        var l = this.creatures.length;
+        this.creatures = [];
+        i = 0;
+        for (; i !== l; i++) {
+            creatureA = weightedGetCreature();
+            while ((creatureB = weightedGetCreature()) === creatureA) {}  // Don't let `parentA` and `parentB` be the same creature
+            this.creatures.push(creatureA.breedWith(creatureB));
         }
-
-        // TODO: This pretty specific for the TravelingSalesmanApp test
-        var localMaximum = -Infinity;
-        this.creatures.forEach(function (creature) {
-            var fitnessScore = creature.fitnessFunction();
-            localMaximum = Math.max(localMaximum, fitnessScore);
-        });
-        console.log('localMaximum:', localMaximum);
-        console.log('_globalMaximum:', _globalMaximum);
-        // END TODO
-
-        return this;
     };
 
 
