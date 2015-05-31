@@ -20,7 +20,6 @@ define(function (require) {
             evaluationResults.push(evaluationResult);
             fitnessScoreSum += evaluationResult.fitnessScore;
         }
-        console.log('test');
 
         var weightedGetCreature = function () {
             while (evaluationResult = evaluationResults[Math.round((evaluationResults.length - 1) * Math.random())]) {
