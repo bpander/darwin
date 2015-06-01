@@ -1,7 +1,9 @@
 define(function (require) {
     'use strict';
 
+    var BackTester = require('./BackTester');
     var Creature = require('../../Creature');
+    var EMAStudy = require('./EMAStudy');
     var Gene = require('../../Gene');
 
 
@@ -19,13 +21,13 @@ define(function (require) {
     EMACreature.prototype.constructor = EMACreature;
 
 
-    var PIP = 0.0001;
+    var PIP = 0.01;
 
 
     EMACreature.prototype.init = function () {
         this.genes = [
-            new Gene('stopLoss', 5, 200, Math.round),
-            new Gene('takeProfit', 5, 200, Math.round)
+            new Gene('stopLoss', 10, 400),
+            new Gene('takeProfit', 10, 400)
         ];
 
         this.backTester.setFunds(1e4);
@@ -47,22 +49,22 @@ define(function (require) {
 
             // Bullish
             if (emaFast > emaSlow && emaFastPrevious <= emaSlowPrevious) {
-                side = Order.BUY;
-                takeProfit = candle.closeBid + this.getGeneByPhenotype('takeProfit').value;
-                stopLoss = candle.closeBid - this.getGeneByPhenotype('stopLoss').value;
+                side = 'buy';
+                takeProfit = candle.closeBid + this.getGeneByPhenotype('takeProfit').value * PIP;
+                stopLoss = candle.closeBid - this.getGeneByPhenotype('stopLoss').value * PIP;
 
             // Bearish
             } else if (emaFast < emaSlow && emaFastPrevious >= emaSlowPrevious) {
-                side = Order.SELL;
-                takeProfit = candle.closeAsk - this.getGeneByPhenotype('takeProfit').value;
-                stopLoss = candle.closeAsk - this.getGeneByPhenotype('stopLoss').value;
+                side = 'sell';
+                takeProfit = candle.closeAsk - this.getGeneByPhenotype('takeProfit').value * PIP;
+                stopLoss = candle.closeAsk + this.getGeneByPhenotype('stopLoss').value * PIP;
 
             // Neutral
             } else {
                 return;
             }
 
-            var units = Math.max(1000, backTester.balance * 0.1);
+            var units = Math.max(1000, backTester.funds * 0.1);
 
             backTester.order({
                 side: side,
@@ -71,12 +73,12 @@ define(function (require) {
                 stopLoss: stopLoss
             });
 
-        });
+        }.bind(this));
     };
 
 
     EMACreature.prototype.fitnessFunction = function (data) {
-        return this.backTester.backTest(data).profit;
+        return Math.max(0, this.backTester.backTest(data).profit);
     };
 
 

@@ -8,11 +8,11 @@ define(function (require) {
 
     function ForexApp () {
 
-        this.creatureCount = 10;
+        this.creatureCount = 100;
 
         this.environment = new Environment();
 
-        this.generationCount = 10;
+        this.generationCount = 100;
 
         this.init();
     }
@@ -30,12 +30,20 @@ define(function (require) {
             this.environment.creatures.push(emaCreature);
         }
 
+        var globalMaximum = { fitnessScore: -Infinity };
+        var results;
+
         // Run a bunch of times
         i = 0;
         l = this.generationCount;
         for (; i !== l; i++) {
-            this.environment.run(trainingData);
+            results = this.environment.run(trainingData.candles);
+            console.log('localMaximum', results);
+            if (results.fitnessScore > globalMaximum.fitnessScore) {
+                globalMaximum = results;
+            }
         }
+        console.log('globalMaximum', globalMaximum);
     };
 
 

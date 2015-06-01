@@ -10,6 +10,7 @@ define(function (require) {
 
 
     Environment.prototype.run = function (data) {
+        var best = { fitnessScore: -Infinity };
         var evaluationResult;
         var evaluationResults = [];
         var fitnessScoreSum = 0;
@@ -17,6 +18,9 @@ define(function (require) {
         var i = -1;
         while ((creature = this.creatures[++i]) !== undefined) {
             evaluationResult = creature.evaluate(data);
+            if (evaluationResult.fitnessScore > best.fitnessScore) {
+                best = evaluationResult;
+            }
             evaluationResults.push(evaluationResult);
             fitnessScoreSum += evaluationResult.fitnessScore;
         }
@@ -36,14 +40,29 @@ define(function (require) {
 
         var creatureA;
         var creatureB;
+        var j;
         var l = this.creatures.length;
         this.creatures = [];
         i = 0;
         for (; i !== l; i++) {
             creatureA = weightedGetCreature();
-            while ((creatureB = weightedGetCreature()) === creatureA) {}  // Don't let `parentA` and `parentB` be the same creature
+
+            // Don't let `parentA` and `parentB` be the same creature
+            j = l;
+            while (j-- !== 0) {
+                creatureB = weightedGetCreature();
+                if (creatureB !== creatureA) {
+                    break;
+                }
+            }
+            if (creatureB === creatureA) {
+                console.warn('had to create a new creature');
+                creatureB = creatureA.clone().randomize();
+            }
+
             this.creatures.push(creatureA.breedWith(creatureB));
         }
+        return best;
     };
 
 

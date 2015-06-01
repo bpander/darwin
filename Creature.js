@@ -17,6 +17,14 @@ define(function (require) {
     };
 
 
+    Creature.prototype.clone = function () {
+        var CreatureClass = this.constructor;
+        var clone = new CreatureClass();
+        clone.genes = this.genes.slice(0);
+        return clone;
+    };
+
+
     Creature.prototype.breedWith = function (creature) {
         var CreatureClass = this.constructor;
         var offspring = new CreatureClass();
@@ -57,6 +65,7 @@ define(function (require) {
         while ((gene = this.genes[++i]) !== undefined) {
             gene.randomize();
         }
+        return this;
     };
 
 

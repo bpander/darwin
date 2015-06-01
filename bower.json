@@ -8,6 +8,7 @@
   ],
   "license": "WTFPL",
   "dependencies": {
-    "requirejs": "~2.1.14"
+    "requirejs": "~2.1.14",
+    "jquery": "~2.1.4"
   }
 }
