@@ -38,7 +38,7 @@ define(function (require) {
 
     Gene.prototype.crossWith = function (otherGene) {
         var gene = this.copy();
-        var dice = Math.round(Math.random() * 3);
+        var dice = Math.floor(Math.random() * 3);
         switch (dice) {
 
             case 0:

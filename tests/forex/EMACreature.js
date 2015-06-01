@@ -30,7 +30,6 @@ define(function (require) {
             new Gene('takeProfit', 10, 400)
         ];
 
-        this.backTester.setFunds(1e4);
         this.backTester.addStudy(this.emaFast);
         this.backTester.addStudy(this.emaSlow);
         this.backTester.onTick(function (candle, i, backTester) {
@@ -78,6 +77,7 @@ define(function (require) {
 
 
     EMACreature.prototype.fitnessFunction = function (data) {
+        this.backTester.setFunds(1e4);
         return Math.max(0, this.backTester.backTest(data).profit);
     };
 
