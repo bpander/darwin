@@ -53,19 +53,19 @@ define(function (require) {
                 if (order.side === 'buy') {
                     if (candle.lowBid <= order.stopLoss) {
                         // TODO: This math is probably wrong. Doesn't take into account the exchange rate.
-                        this.funds += order.units + (order.stopLoss - order.price) * order.units;
+                        this.funds += order.units + (order.stopLoss - order.price) * order.units * (1 / order.stopLoss);
                         this.orders.splice(j, 1);
                     } else if (candle.highBid >= order.takeProfit) {
-                        this.funds += order.units + (order.takeProfit - order.price) * order.units;
+                        this.funds += order.units + (order.takeProfit - order.price) * order.units * (1 / order.takeProfit);
                         this.orders.splice(j, 1);
                     }
 
                 } else if (order.side === 'sell') {
                     if (candle.highAsk >= order.stopLoss) {
-                        this.funds += order.units + (order.price - order.stopLoss) * order.units;
+                        this.funds += order.units + (order.price - order.stopLoss) * order.units * (1 / order.stopLoss);
                         this.orders.splice(j, 1);
                     } else if (candle.lowAsk <= order.takeProfit) {
-                        this.funds += order.units + (order.price - order.takeProfit) * order.units;
+                        this.funds += order.units + (order.price - order.takeProfit) * order.units * (1 / order.takeProfit);
                         this.orders.splice(j, 1);
                     }
                 }
